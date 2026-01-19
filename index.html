@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Митоз - Интерактивные задания</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Нежно-фиолетовая цветовая палитра */
+        :root {
+            --primary-light: #e6d7ff;
+            --primary: #b794f6;
+            --primary-dark: #9f7aea;
+            --secondary-light: #d6bcfa;
+            --secondary: #b794f6;
+            --accent: #805ad5;
+            --background: linear-gradient(135deg, #f7f0ff 0%, #f0e6ff 100%);
+            --white: #ffffff;
+            --text-primary: #4a5568;
+            --text-secondary: #718096;
+            --text-light: #a0aec0;
+            --success: #68d391;
+            --error: #fc8181;
+            --warning: #fbd38d;
+            --shadow-light: rgba(183, 148, 246, 0.1);
+            --shadow-medium: rgba(183, 148, 246, 0.2);
+            --shadow-deep: rgba(183, 148, 246, 0.3);
+            --border-radius: 16px;
+            --border-radius-small: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Глобальные стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(183, 148, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(159, 122, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(183, 148, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Шапка */
+        .header {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            border: 1px solid rgba(183, 148, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: header-slide 0.8s ease-out;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary), var(--primary-dark));
+        }
+
+        .header-content {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            animation: title-glow 4s ease-in-out infinite;
+        }
+
+        .title i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: float-animation 3s ease-in-out infinite;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Прогресс-бар */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--primary-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+            animation: progress-glow 2s ease-in-out infinite;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        /* Основной контент */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* Дисплей оценки */
+        .score-display {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            border: 1px solid rgba(183, 148, 246, 0.2);
+            position: sticky;
+            top: 20px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            position: relative;
+            box-shadow: 0 8px 25px var(--shadow-medium);
+            animation: float-animation 3s ease-in-out infinite;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            background: var(--white);
+        }
+
+        .score-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            z-index: 1;
+            animation: score-bounce 0.6s ease-out;
+        }
+
+        .score-total {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            z-index: 1;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Контейнер с вопросами */
+        .quiz-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            border: 1px solid rgba(183, 148, 246, 0.2);
+            position: relative;
+        }
+
+        /* Карточка вопроса */
+        .question-card {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes header-slide {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes title-glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(183, 148, 246, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(183, 148, 246, 0.6);
+            }
+        }
+
+        @keyframes float-animation {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-8px) rotate(2deg);
+            }
+            66% {
+                transform: translateY(-4px) rotate(-2deg);
+            }
+        }
+
+        @keyframes score-bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-15px);
+            }
+            60% {
+                transform: translateY(-7px);
+            }
+        }
+
+        @keyframes progress-glow {
+            0% {
+                box-shadow: 0 0 5px rgba(183, 148, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(183, 148, 246, 0.6);
+            }
+            100% {
+                box-shadow: 0 0 5px rgba(183, 148, 246, 0.3);
+            }
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        .question-number {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            background: var(--primary-light);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .difficulty {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .difficulty .fa-star {
+            color: var(--warning);
+        }
+
+        .question-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* Опции ответов */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            background: var(--primary-light);
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--white), var(--primary-light));
+            opacity: 0.7;
+            z-index: 0;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-medium);
+            border-color: var(--primary);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-dark);
+            position: relative;
+            z-index: 1;
+        }
+
+        .option-text {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .option.correct {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+            animation: success-celebration 0.8s ease-out;
+        }
+
+        .option.incorrect {
+            background: var(--error);
+            border-color: var(--error);
+            color: white;
+            animation: error-shake 0.4s ease-in-out;
+        }
+
+        .option.correct .option-text,
+        .option.incorrect .option-text {
+            color: white;
+        }
+
+        @keyframes success-celebration {
+            0% {
+                transform: scale(1) rotate(0deg);
+                background: var(--success);
+            }
+            25% {
+                transform: scale(1.1) rotate(5deg);
+                background: #48bb78;
+            }
+            50% {
+                transform: scale(1.2) rotate(-5deg);
+                background: #38a169;
+            }
+            75% {
+                transform: scale(1.1) rotate(3deg);
+                background: #48bb78;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                background: var(--success);
+            }
+        }
+
+        @keyframes error-shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-3px);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translateX(3px);
+            }
+        }
+
+        /* Кнопки */
+        .check-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: var(--border-radius-small);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            animation: check-pulse 2s infinite;
+        }
+
+        @keyframes check-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(183, 148, 246, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(183, 148, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(183, 148, 246, 0);
+            }
+        }
+
+        .check-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .check-btn:hover::before {
+            left: 100%;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-deep);
+        }
+
+        .check-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            animation: none;
+        }
+
+        /* Обратная связь */
+        .feedback {
+            padding: 20px;
+            border-radius: var(--border-radius-small);
+            margin-top: 20px;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: var(--transition);
+        }
+
+        .feedback.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feedback.correct {
+            background: rgba(104, 211, 145, 0.1);
+            color: #2f855a;
+            border: 2px solid var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(252, 129, 129, 0.1);
+            color: #c53030;
+            border: 2px solid var(--error);
+        }
+
+        /* Навигация */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--primary-light);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary-dark);
+            border-radius: var(--border-radius-small);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .nav-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--text-light);
+            color: var(--text-light);
+        }
+
+        /* Контейнер результатов */
+        .results-container {
+            grid-column: 1 / -1;
+        }
+
+        .results-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            border: 1px solid rgba(183, 148, 246, 0.2);
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(183, 148, 246, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .results-header {
+            margin-bottom: 30px;
+        }
+
+        .results-header i {
+            font-size: 3rem;
+            color: var(--warning);
+            margin-bottom: 15px;
+            animation: float-animation 2s ease-in-out infinite;
+        }
+
+        .results-header h2 {
+            font-size: 2rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .final-score {
+            margin: 30px 0;
+        }
+
+        .final-score-number {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .final-score-total {
+            font-size: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .score-message {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: var(--border-radius-small);
+        }
+
+        .score-message.excellent {
+            background: rgba(104, 211, 145, 0.1);
+            color: #2f855a;
+            border: 2px solid var(--success);
+        }
+
+        .score-message.good {
+            background: rgba(251, 211, 141, 0.1);
+            color: #b7791f;
+            border: 2px solid var(--warning);
+        }
+
+        .score-message.needs-improvement {
+            background: rgba(252, 129, 129, 0.1);
+            color: #c53030;
+            border: 2px solid var(--error);
+        }
+
+        .results-details {
+            background: var(--primary-light);
+            padding: 25px;
+            border-radius: var(--border-radius-small);
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .results-details p {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .results-details p:last-child {
+            margin-bottom: 0;
+        }
+
+        .results-details strong {
+            color: var(--primary-dark);
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: var(--border-radius-small);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-deep);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .title {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .score-display {
+                position: static;
+                order: 2;
+            }
+            
+            .quiz-container {
+                order: 1;
+            }
+            
+            .question-title {
+                font-size: 1.1rem;
+            }
+            
+            .options {
+                gap: 12px;
+            }
+            
+            .option {
+                padding: 15px;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .results-card {
+                padding: 30px 20px;
+            }
+            
+            .final-score-number {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .progress-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .quiz-container {
+                padding: 25px 20px;
+            }
+            
+            .question-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .results-details {
+                padding: 20px;
+            }
+        }
+
+        /* Анимации для правильного/неправильного ответа */
+        @keyframes success-celebration {
+            0% {
+                transform: scale(1) rotate(0deg);
+                background: var(--success);
+            }
+            25% {
+                transform: scale(1.1) rotate(5deg);
+                background: #48bb78;
+            }
+            50% {
+                transform: scale(1.2) rotate(-5deg);
+                background: #38a169;
+            }
+            75% {
+                transform: scale(1.1) rotate(3deg);
+                background: #48bb78;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                background: var(--success);
+            }
+        }
+
+        @keyframes error-shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-3px);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translateX(3px);
+            }
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Улучшенная доступность */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Улучшенные фокус-стили для клавиатурной навигации */
+        .check-btn:focus,
+        .nav-btn:focus,
+        .option input[type="radio"]:focus + .option-text {
+            outline: 2px solid var(--primary-dark);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">
+                    <i class="fas fa-dna"></i>
+                    Митоз - Путешествие клетки
+                </h1>
+                <p class="subtitle">Изучаем процесс деления клетки</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0/10 заданий</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="score-display" id="scoreDisplay">
+                <div class="score-circle">
+                    <span class="score-number" id="scoreNumber">0</span>
+                    <span class="score-total">/10</span>
+                </div>
+                <p class="score-label">Ваша оценка</p>
+            </div>
+
+            <div class="quiz-container">
+                <div class="question-card active" data-question="1">
+                    <div class="question-header">
+                        <span class="question-number">1/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <span>Легкий</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Какая фаза митоза характеризуется расхождением хромосом к полюсам клетки?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q1" value="a">
+                            <span class="option-text">Профаза</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="b">
+                            <span class="option-text">Метафаза</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="c">
+                            <span class="option-text">Анафаза</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="d">
+                            <span class="option-text">Телофаза</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(1, 'c')">Проверить</button>
+                    <div class="feedback" id="feedback1"></div>
+                </div>
+
+                <div class="question-card" data-question="2">
+                    <div class="question-header">
+                        <span class="question-number">2/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <span>Легкий</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Сколько дочерних клеток образуется в результате митоза?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q2" value="a">
+                            <span class="option-text">1</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="b">
+                            <span class="option-text">2</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="c">
+                            <span class="option-text">4</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="d">
+                            <span class="option-text">8</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(2, 'b')">Проверить</button>
+                    <div class="feedback" id="feedback2"></div>
+                </div>
+
+                <div class="question-card" data-question="3">
+                    <div class="question-header">
+                        <span class="question-number">3/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <span>Легкий</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">В какой фазе митоза хромосомы выстраиваются по экватору клетки?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q3" value="a">
+                            <span class="option-text">Профаза</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="b">
+                            <span class="option-text">Метафаза</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="c">
+                            <span class="option-text">Анафаза</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="d">
+                            <span class="option-text">Телофаза</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(3, 'b')">Проверить</button>
+                    <div class="feedback" id="feedback3"></div>
+                </div>
+
+                <div class="question-card" data-question="4">
+                    <div class="question-header">
+                        <span class="question-number">4/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>Средний</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Какой организм не использует митоз для деления клеток?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q4" value="a">
+                            <span class="option-text">Человек</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="b">
+                            <span class="option-text">Гриб</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="c">
+                            <span class="option-text">Бактерия</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="d">
+                            <span class="option-text">Растение</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(4, 'c')">Проверить</button>
+                    <div class="feedback" id="feedback4"></div>
+                </div>
+
+                <div class="question-card" data-question="5">
+                    <div class="question-header">
+                        <span class="question-number">5/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>Средний</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Что происходит с ядерной оболочкой в профазе митоза?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q5" value="a">
+                            <span class="option-text">Утолщается</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q5" value="b">
+                            <span class="option-text">Рассасывается</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q5" value="c">
+                            <span class="option-text">Удваивается</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q5" value="d">
+                            <span class="option-text">Не изменяется</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(5, 'b')">Проверить</button>
+                    <div class="feedback" id="feedback5"></div>
+                </div>
+
+                <div class="question-card" data-question="6">
+                    <div class="question-header">
+                        <span class="question-number">6/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>Средний</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Сколько хроматид содержится в одной хромосоме после репликации ДНК?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q6" value="a">
+                            <span class="option-text">1</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q6" value="b">
+                            <span class="option-text">2</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q6" value="c">
+                            <span class="option-text">4</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q6" value="d">
+                            <span class="option-text">8</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(6, 'b')">Проверить</button>
+                    <div class="feedback" id="feedback6"></div>
+                </div>
+
+                <div class="question-card" data-question="7">
+                    <div class="question-header">
+                        <span class="question-number">7/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>Сложный</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Какой белок играет ключевую роль в прикреплении хромосом к веретену деления?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q7" value="a">
+                            <span class="option-text">Актин</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q7" value="b">
+                            <span class="option-text">Тубулин</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q7" value="c">
+                            <span class="option-text">Кинезин</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q7" value="d">
+                            <span class="option-text">Коэзин</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(7, 'd')">Проверить</button>
+                    <div class="feedback" id="feedback7"></div>
+                </div>
+
+                <div class="question-card" data-question="8">
+                    <div class="question-header">
+                        <span class="question-number">8/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>Сложный</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Что контролирует точка проверки G2/M в клеточном цикле?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q8" value="a">
+                            <span class="option-text">Репликация ДНК</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q8" value="b">
+                            <span class="option-text">Целостность ДНК</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q8" value="c">
+                            <span class="option-text">Правильность прикрепления хромосом</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q8" value="d">
+                            <span class="option-text">Разделение органелл</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(8, 'b')">Проверить</button>
+                    <div class="feedback" id="feedback8"></div>
+                </div>
+
+                <div class="question-card" data-question="9">
+                    <div class="question-header">
+                        <span class="question-number">9/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>Сложный</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Как называется структура, образующаяся на месте пересечения хромосом в метафазе?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q9" value="a">
+                            <span class="option-text">Кинетохор</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q9" value="b">
+                            <span class="option-text">Центромера</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q9" value="c">
+                            <span class="option-text">Метафазная плоскость</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q9" value="d">
+                            <span class="option-text">Хромомера</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(9, 'b')">Проверить</button>
+                    <div class="feedback" id="feedback9"></div>
+                </div>
+
+                <div class="question-card" data-question="10">
+                    <div class="question-header">
+                        <span class="question-number">10/10</span>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>Сложный</span>
+                        </div>
+                    </div>
+                    <h3 class="question-title">Какой процесс происходит одновременно с телофазой митоза?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q10" value="a">
+                            <span class="option-text">Репликация ДНК</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q10" value="b">
+                            <span class="option-text">Цитокинез</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q10" value="c">
+                            <span class="option-text">Синтез белков</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q10" value="d">
+                            <span class="option-text">Транскрипция</span>
+                        </label>
+                    </div>
+                    <button class="check-btn" onclick="checkAnswer(10, 'b')">Проверить</button>
+                    <div class="feedback" id="feedback10"></div>
+                </div>
+
+                <div class="navigation">
+                    <button class="nav-btn prev-btn" id="prevBtn" onclick="previousQuestion()" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                        Предыдущий
+                    </button>
+                    <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()">
+                        Следующий
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-container" id="resultsContainer" style="display: none;">
+                <div class="results-card">
+                    <div class="results-header">
+                        <i class="fas fa-trophy"></i>
+                        <h2>Результаты теста</h2>
+                    </div>
+                    <div class="results-content">
+                        <div class="final-score">
+                            <span class="final-score-number" id="finalScore">0</span>
+                            <span class="final-score-total">/10</span>
+                        </div>
+                        <div class="score-message" id="scoreMessage"></div>
+                        <div class="results-details">
+                            <p><strong>Правильных ответов:</strong> <span id="correctAnswers">0</span></p>
+                            <p><strong>Неправильных ответов:</strong> <span id="incorrectAnswers">0</span></p>
+                            <p><strong>Процент выполнения:</strong> <span id="percentage">0%</span></p>
+                        </div>
+                    </div>
+                    <button class="restart-btn" onclick="restartQuiz()">
+                        <i class="fas fa-redo"></i>
+                        Пройти тест снова
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Переменные для отслеживания состояния теста
+        let currentQuestion = 1;
+        let totalQuestions = 10;
+        let score = 0;
+        let answeredQuestions = new Set();
+        let userAnswers = {};
+
+        // Ответы на вопросы (ключ - номер вопроса, значение - правильный ответ)
+        const correctAnswers = {
+            1: 'c', // Анафаза - расхождение хромосом к полюсам
+            2: 'b', // 2 дочерних клетки
+            3: 'b', // Метафаза - хромосомы на экваторе
+            4: 'c', // Бактерии не используют митоз
+            5: 'b', // Ядерная оболочка рассасывается в профазе
+            6: 'b', // 2 хроматида после репликации
+            7: 'd', // Коэзин для прикрепления хромосом
+            8: 'b', // G2/M контролирует целостность ДНК
+            9: 'b', // Центромера - место пересечения
+            10: 'b' // Цитокинез происходит с телофазой
+        };
+
+        // Комментарии к ответам
+        const answerComments = {
+            1: 'Правильно! В анафазе сестринские хроматиды расходятся к противоположным полюсам клетки.',
+            2: 'Верно! В результате митоза образуются две генетически идентичные дочерние клетки.',
+            3: 'Отлично! В метафазе хромосомы выстраиваются по экватору клетки образуя метафазную плоскость.',
+            4: 'Точно! Бактерии делятся бинарным делением, а не митозом.',
+            5: 'Да! В профазе ядерная оболочка рассасывается, чтобы веретено деления могло взаимодействовать с хромосомами.',
+            6: 'Правильно! После репликации каждая хромосома состоит из двух сестринских хроматид.',
+            7: 'Верно! Коэзин - белок, который удерживает сестринские хроматиды вместе до анафазы.',
+            8: 'Отлично! Точка проверки G2/M контролирует, правильно ли реплицировалась ДНК.',
+            9: 'Точно! Центромера - это область хромосомы, где происходит пересечение и прикрепление к веретену.',
+            10: 'Да! Цитокинез - деление цитоплазмы, обычно происходит одновременно с телофазой.'
+        };
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            showQuestion(1);
+            initializeOptionHandlers();
+            
+            // Добавить кнопки подсказок
+            document.querySelectorAll('.question-card').forEach(card => {
+                const questionNumber = parseInt(card.dataset.question);
+                const questionHeader = card.querySelector('.question-header');
+                
+                if (questionHeader) {
+                    const hintBtn = document.createElement('button');
+                    hintBtn.className = 'hint-btn';
+                    hintBtn.innerHTML = '<i class="fas fa-lightbulb"></i>';
+                    hintBtn.title = 'Показать подсказку';
+                    hintBtn.onclick = () => showHint(questionNumber);
+                    hintBtn.style.cssText = `
+                        background: var(--secondary-light);
+                        border: none;
+                        padding: 8px 12px;
+                        border-radius: 20px;
+                        cursor: pointer;
+                        transition: var(--transition);
+                        color: var(--primary-dark);
+                        font-size: 0.9rem;
+                        margin-left: 10px;
+                    `;
+                    
+                    hintBtn.addEventListener('mouseenter', function() {
+                        this.style.background = 'var(--primary)';
+                        this.style.color = 'white';
+                    });
+                    
+                    hintBtn.addEventListener('mouseleave', function() {
+                        this.style.background = 'var(--secondary-light)';
+                        this.style.color = 'var(--primary-dark)';
+                    });
+                    
+                    questionHeader.appendChild(hintBtn);
+                }
+            });
+        });
+
+        // Функция показа вопроса
+        function showQuestion(questionNumber) {
+            // Скрыть все вопросы
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Показать текущий вопрос
+            const currentCard = document.querySelector(`[data-question="${questionNumber}"]`);
+            if (currentCard) {
+                currentCard.classList.add('active');
+            }
+            
+            // Обновить кнопки навигации
+            updateNavigationButtons();
+            
+            // Если вопрос уже отвечен, показать результат
+            if (answeredQuestions.has(questionNumber)) {
+                disableQuestionOptions(questionNumber);
+                showFeedback(questionNumber, userAnswers[questionNumber] === correctAnswers[questionNumber]);
+            }
+        }
+
+        // Функция проверки ответа
+        function checkAnswer(questionNumber, correctAnswer) {
+            // Проверить, выбран ли ответ
+            const selectedOption = document.querySelector(`input[name="q${questionNumber}"]:checked`);
+            if (!selectedOption) {
+                alert('Пожалуйста, выберите один из вариантов ответа!');
+                return;
+            }
+            
+            // Записать ответ пользователя
+            userAnswers[questionNumber] = selectedOption.value;
+            answeredQuestions.add(questionNumber);
+            
+            // Проверить правильность ответа
+            const isCorrect = selectedOption.value === correctAnswer;
+            if (isCorrect) {
+                score++;
+            }
+            
+            // Визуально отметить выбранный ответ
+            markSelectedOption(questionNumber, selectedOption.value, isCorrect);
+            
+            // Отключить все опции
+            disableQuestionOptions(questionNumber);
+            
+            // Показать обратную связь
+            showFeedback(questionNumber, isCorrect);
+            
+            // Обновить счет
+            updateScore();
+            updateProgress();
+            
+            // Добавить анимацию к кнопке проверки
+            animateCheckButton(questionNumber);
+        }
+
+        // Функция визуальной маркировки выбранного ответа
+        function markSelectedOption(questionNumber, selectedValue, isCorrect) {
+            const options = document.querySelectorAll(`[data-question="${questionNumber}"] .option`);
+            options.forEach(option => {
+                const radioInput = option.querySelector('input[type="radio"]');
+                if (radioInput) {
+                    if (radioInput.value === selectedValue) {
+                        option.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    } else if (radioInput.value === correctAnswers[questionNumber]) {
+                        option.classList.add('correct');
+                    }
+                }
+            });
+        }
+
+        // Функция отключения опций вопроса
+        function disableQuestionOptions(questionNumber) {
+            const options = document.querySelectorAll(`[data-question="${questionNumber}"] input[type="radio"]`);
+            options.forEach(option => {
+                option.disabled = true;
+            });
+            
+            // Отключить кнопку проверки
+            const checkBtn = document.querySelector(`[data-question="${questionNumber}"] .check-btn`);
+            if (checkBtn) {
+                checkBtn.disabled = true;
+            }
+        }
+
+        // Функция показа обратной связи
+        function showFeedback(questionNumber, isCorrect) {
+            const feedback = document.getElementById(`feedback${questionNumber}`);
+            if (feedback) {
+                feedback.textContent = answerComments[questionNumber];
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+                feedback.classList.add('show');
+            }
+        }
+
+        // Функция обновления счета
+        function updateScore() {
+            const scoreNumber = document.getElementById('scoreNumber');
+            if (scoreNumber) {
+                scoreNumber.textContent = score;
+                scoreNumber.classList.add('score-update');
+                setTimeout(() => {
+                    scoreNumber.classList.remove('score-update');
+                }, 600);
+            }
+        }
+
+        // Функция обновления прогресса
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            if (progressFill && progressText) {
+                const progressPercentage = (answeredQuestions.size / totalQuestions) * 100;
+                progressFill.style.width = `${progressPercentage}%`;
+                progressText.textContent = `${answeredQuestions.size}/${totalQuestions} заданий`;
+                
+                if (answeredQuestions.size === totalQuestions) {
+                    progressFill.classList.add('complete');
+                }
+            }
+        }
+
+        // Функция обновления кнопок навигации
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (prevBtn) {
+                prevBtn.disabled = currentQuestion === 1;
+            }
+            
+            if (nextBtn) {
+                if (currentQuestion === totalQuestions) {
+                    nextBtn.textContent = 'Завершить тест';
+                    nextBtn.onclick = finishQuiz;
+                } else {
+                    nextBtn.innerHTML = 'Следующий <i class="fas fa-chevron-right"></i>';
+                    nextBtn.onclick = nextQuestion;
+                }
+            }
+        }
+
+        // Функция перехода к следующему вопросу
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        // Функция перехода к предыдущему вопросу
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        // Функция завершения теста
+        function finishQuiz() {
+            if (answeredQuestions.size < totalQuestions) {
+                const unansweredCount = totalQuestions - answeredQuestions.size;
+                if (confirm(`У вас осталось ${unansweredCount} неотвеченных вопросов. Завершить тест?`)) {
+                    showResults();
+                }
+            } else {
+                showResults();
+            }
+        }
+
+        // Функция показа результатов
+        function showResults() {
+            const quizContainer = document.querySelector('.quiz-container');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const scoreDisplay = document.querySelector('.score-display');
+            
+            if (quizContainer && resultsContainer && scoreDisplay) {
+                // Скрыть квиз и дисплей оценки
+                quizContainer.style.display = 'none';
+                scoreDisplay.style.display = 'none';
+                
+                // Показать результаты
+                resultsContainer.style.display = 'block';
+                
+                // Заполнить данные результатов
+                const finalScore = document.getElementById('finalScore');
+                const correctAnswersCount = document.getElementById('correctAnswers');
+                const incorrectAnswersCount = document.getElementById('incorrectAnswers');
+                const percentage = document.getElementById('percentage');
+                const scoreMessage = document.getElementById('scoreMessage');
+                
+                if (finalScore) finalScore.textContent = score;
+                if (correctAnswersCount) correctAnswersCount.textContent = score;
+                if (incorrectAnswersCount) incorrectAnswersCount.textContent = totalQuestions - score;
+                if (percentage) percentage.textContent = `${Math.round((score / totalQuestions) * 100)}%`;
+                
+                // Определить сообщение в зависимости от оценки
+                if (scoreMessage) {
+                    let message = '';
+                    let messageClass = '';
+                    
+                    if (score >= 9) {
+                        message = 'Отлично! Вы прекрасно разбираетесь в митозе!';
+                        messageClass = 'excellent';
+                    } else if (score >= 7) {
+                        message = 'Хорошо! У вас хорошее понимание процесса митоза.';
+                        messageClass = 'good';
+                    } else if (score >= 5) {
+                        message = 'Неплохо! Но есть куда стремиться. Попробуйте еще раз!';
+                        messageClass = 'good';
+                    } else {
+                        message = 'Требуется больше практики. Не расстраивайтесь и попробуйте снова!';
+                        messageClass = 'needs-improvement';
+                    }
+                    
+                    scoreMessage.textContent = message;
+                    scoreMessage.className = `score-message ${messageClass}`;
+                }
+                
+                // Добавить анимацию к трофею
+                const trophyIcon = document.querySelector('.results-header i');
+                if (trophyIcon) {
+                    trophyIcon.style.animation = 'float-animation 3s ease-in-out infinite';
+                }
+            }
+        }
+
+        // Функция перезапуска теста
+        function restartQuiz() {
+            // Сбросить все переменные
+            currentQuestion = 1;
+            score = 0;
+            answeredQuestions.clear();
+            userAnswers = {};
+            
+            // Сбросить визуальные элементы
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+            });
+            
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+                radio.disabled = false;
+            });
+            
+            document.querySelectorAll('.check-btn').forEach(btn => {
+                btn.disabled = false;
+            });
+            
+            document.querySelectorAll('.feedback').forEach(feedback => {
+                feedback.classList.remove('show');
+            });
+            
+            // Скрыть результаты и показать квиз
+            const quizContainer = document.querySelector('.quiz-container');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const scoreDisplay = document.querySelector('.score-display');
+            
+            if (quizContainer && resultsContainer && scoreDisplay) {
+                resultsContainer.style.display = 'none';
+                quizContainer.style.display = 'block';
+                scoreDisplay.style.display = 'block';
+            }
+            
+            // Обновить счет и прогресс
+            updateScore();
+            updateProgress();
+            
+            // Показать первый вопрос
+            showQuestion(1);
+        }
+
+        // Функция анимации кнопки проверки
+        function animateCheckButton(questionNumber) {
+            const checkBtn = document.querySelector(`[data-question="${questionNumber}"] .check-btn`);
+            if (checkBtn) {
+                checkBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    checkBtn.style.transform = 'scale(1)';
+                }, 150);
+            }
+        }
+
+        // Обработчики клавиатуры
+        document.addEventListener('keydown', function(event) {
+            // Переход к следующему вопросу по стрелке вправо
+            if (event.key === 'ArrowRight' && currentQuestion < totalQuestions) {
+                nextQuestion();
+            }
+            
+            // Переход к предыдущему вопросу по стрелке влево
+            if (event.key === 'ArrowLeft' && currentQuestion > 1) {
+                previousQuestion();
+            }
+            
+            // Проверка ответа по Enter
+            if (event.key === 'Enter' && !answeredQuestions.has(currentQuestion)) {
+                const checkBtn = document.querySelector(`[data-question="${currentQuestion}"] .check-btn`);
+                if (checkBtn && !checkBtn.disabled) {
+                    checkBtn.click();
+                }
+            }
+        });
+
+        // Функция для показа подсказок
+        function showHint(questionNumber) {
+            const hints = {
+                1: 'Подумайте о фазе, где хромосомы начинают двигаться.',
+                2: 'Сколько клеток нужно для замены одной?',
+                3: 'В какой фазе хромосомы выстраиваются по центру?',
+                4: 'Какие организмы имеют более простой способ деления?',
+                5: 'Что должно исчезнуть, чтобы веретено деления могло работать?',
+                6: 'Сколько копий ДНК в каждой хромосоме после копирования?',
+                7: 'Какой белок удерживает хроматиды вместе?',
+                8: 'Что важно проверить перед началом митоза?',
+                9: 'Как называется центральная часть хромосомы?',
+                10: 'Что происходит одновременно с окончанием деления ядра?'
+            };
+            
+            if (hints[questionNumber] && !answeredQuestions.has(questionNumber)) {
+                const feedback = document.getElementById(`feedback${questionNumber}`);
+                if (feedback) {
+                    feedback.textContent = `💡 Подсказка: ${hints[questionNumber]}`;
+                    feedback.className = 'feedback show';
+                    
+                    // Убрать подсказку через 5 секунд
+                    setTimeout(() => {
+                        feedback.classList.remove('show');
+                    }, 5000);
+                }
+            }
+        }
+
+        // Добавить обработчики событий для опций
+        function initializeOptionHandlers() {
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio && !radio.disabled) {
+                        // Убрать выделение со всех опций в этом вопросе
+                        const questionCard = this.closest('.question-card');
+                        if (questionCard) {
+                            questionCard.querySelectorAll('.option').forEach(opt => {
+                                opt.style.background = '';
+                            });
+                        }
+                        
+                        // Выделить выбранную опцию
+                        this.style.background = 'rgba(183, 148, 246, 0.3)';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
